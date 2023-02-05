@@ -47,7 +47,7 @@ export default async function handler(
     });
     const result = completion.data.choices[0].text
     res.status(200).json({ data: result });
-  } catch(error) {
+  } catch(error: any) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
       console.error(error.response.status, error.response.data);
