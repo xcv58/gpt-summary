@@ -1,0 +1,17 @@
+{
+  "name": "gpt-summary-root",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^2.8.3"
+  },
+  "lint-staged": {
+    "*.{js,ts,md,html,css}": "prettier --write"
+  }
+}
