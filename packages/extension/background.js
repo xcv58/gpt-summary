@@ -8,9 +8,39 @@ function getSelectionOrContent() {
   return window.document.body.innerText;
 }
 
+async function fetchSummary(content) {
+  try {
+    response = await fetch("https://gpt-summary.xcv58.org/api/summary", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ content })
+    })
+    const data = await response.json();
+    return data
+  } catch (e) {
+    console.error(error)
+    return { error }
+  }
+}
+
 chrome.action.onClicked.addListener(async (tab) => {
   console.log('onclick');
   const tabId = tab.id
+  const prevState = await chrome.action.getBadgeText({
+    tabId
+  });
+  const isLoading = prevState === LOADING
+  if (!isLoading) {
+    await chrome.action.setBadgeText({
+      tabId,
+      text: LOADING,
+    });
+  } else {
+    console.log('Pending request');
+    return
+  }
   let results = await chrome.scripting.executeScript({
     target: { tabId },
     func: getSelectionOrContent,
@@ -21,31 +51,20 @@ chrome.action.onClicked.addListener(async (tab) => {
     return
   }
   const [res] = results
-  const { result, error } = res
-  console.log(result, error);
+  const { result } = res
+  console.log(result);
 
-  const prevState = await chrome.action.getBadgeText({
-    tabId
+  const { data, error } = await fetchSummary(result)
+  console.log({ data, error });
+  await chrome.action.setBadgeText({
+    tabId,
+    text: ''
   });
-  const isLoading = prevState === LOADING
-  console.log({ prevState });
-  if (!isLoading) {
-    await chrome.action.setBadgeText({
-      tabId,
-      text: LOADING,
-    });
-  }
-  // TODO: mimic the API call
-  setTimeout(async () => {
-    await chrome.action.setBadgeText({
-      tabId,
-      text: ''
-    });
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      func: () => {
-        console.log("hello world!")
-      },
-    })
-  }, 1000)
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: (data) => {
+      console.log('data:', data)
+    },
+    args: [data]
+  })
 });
