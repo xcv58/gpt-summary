@@ -115,5 +115,5 @@ chrome.action.onClicked.addListener(async (tab) => {
 
   const { data, error } = await fetchSummary(result)
   console.log({ data, error })
-  await sendResult(tabId, data)
+  await sendResult(tabId, data || error.message)
 })
