@@ -11,9 +11,7 @@ function createModal() {
           <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
         </div>
         <div class="modal__content" id="gpt-summary-modal-content">
-          <p>
-            Try hitting the <code>tab</code> key and notice how the focus stays within the modal itself. Also, <code>esc</code> to close modal.
-          </p>
+          <span class="gpt-summary-loader"></span>
         </div>
         <div class="modal__footer">
           <button class="modal__btn modal__btn-primary">Continue</button>
@@ -23,6 +21,9 @@ function createModal() {
   </div>
 `
   document.body.appendChild(newDiv)
+  const MicroModal = window.MicroModal
+  MicroModal.init()
+  MicroModal.show('gpt-summary-modal')
 }
 
 if (!document.querySelector('#gpt-summary-modal')) {
