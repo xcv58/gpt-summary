@@ -23,15 +23,19 @@ function createModal() {
   document.body.appendChild(newDiv)
   document
     .querySelector('#gpt-summary-copy')
-    .addEventListener('click', function () {
+    .addEventListener('click', function (e) {
       const text = document.querySelector(
         '#gpt-summary-modal-content'
       ).textContent
       navigator.clipboard.writeText(text).then(
-        function () {
+        () => {
           console.log('Text copied to clipboard successfully!')
+          e.target.innerText = 'Copied!'
+          setTimeout(() => {
+            e.target.innerText = 'Copy'
+          }, 1000)
         },
-        function (err) {
+        (err) => {
           console.error('Failed to copy text: ', err)
         }
       )
