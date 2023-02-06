@@ -50,7 +50,7 @@ async function upsertInjections(tabId) {
     })
     return await chrome.scripting.executeScript({
       target: { tabId },
-      files: ['topbar.min.js', 'micromodal.min.js', 'modal.js'],
+      files: ['micromodal.min.js', 'modal.js'],
     })
   }
 }
@@ -59,10 +59,6 @@ async function sendResult(tabId, data) {
   await chrome.action.setBadgeText({
     tabId,
     text: '',
-  })
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    func: () => window.topbar.hide(),
   })
   await chrome.scripting.executeScript({
     target: { tabId },
@@ -88,7 +84,6 @@ async function setLoadingIndicator(tabId) {
   await chrome.scripting.executeScript({
     target: { tabId },
     func: () => {
-      window.topbar.show()
       const contentDiv = window.document.querySelector(
         '#gpt-summary-modal-content'
       )
