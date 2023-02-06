@@ -2,25 +2,40 @@ function createModal() {
   const newDiv = document.createElement('div')
   newDiv.innerHTML = `
   <div class="modal micromodal-slide" id="gpt-summary-modal" aria-hidden="true">
-    <div class="modal__overlay" tabindex="-1">
-      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="gpt-summary-modal-title">
-        <div class="modal__header">
+    <div class="gtp-summary_modal__overlay" tabindex="-1">
+      <div class="gtp-summary_modal__container" role="dialog" aria-modal="true" aria-labelledby="gpt-summary-modal-title">
+        <div class="gtp-summary_modal__header">
           <h2 class="modal__title" id="gpt-summary-modal-title">
             GPT Summary
           </h2>
-          <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+          <button class="gtp-summary_modal__close" aria-label="Close modal" data-micromodal-close></button>
         </div>
-        <div class="modal__content" id="gpt-summary-modal-content">
+        <div class="gtp-summary_modal__content" id="gpt-summary-modal-content">
           <span class="gpt-summary-loader"></span>
         </div>
-        <div class="modal__footer">
-          <button class="modal__btn modal__btn-primary">Continue</button>
+        <div class="gtp-summary_modal__footer">
+          <button class="gtp-summary_modal__btn gtp-summary_modal__btn-primary" id="gpt-summary-copy">Copy</button>
         </div>
       </div>
     </div>
   </div>
 `
   document.body.appendChild(newDiv)
+  document
+    .querySelector('#gpt-summary-copy')
+    .addEventListener('click', function () {
+      const text = document.querySelector(
+        '#gpt-summary-modal-content'
+      ).textContent
+      navigator.clipboard.writeText(text).then(
+        function () {
+          console.log('Text copied to clipboard successfully!')
+        },
+        function (err) {
+          console.error('Failed to copy text: ', err)
+        }
+      )
+    })
   const MicroModal = window.MicroModal
   MicroModal.init()
   MicroModal.show('gpt-summary-modal')
