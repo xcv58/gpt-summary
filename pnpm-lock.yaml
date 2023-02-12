@@ -20,6 +20,7 @@ importers:
       cors: ^2.8.5
       eslint: 8.33.0
       eslint-config-next: 13.1.6
+      eventsource-parser: ^0.1.0
       next: 13.1.6
       openai: ^3.1.0
       react: 18.2.0
@@ -32,6 +33,7 @@ importers:
       '@types/react-dom': 18.0.10
       eslint: 8.33.0
       eslint-config-next: 13.1.6_4vsywjlpuriuw3tl5oq6zy5a64
+      eventsource-parser: 0.1.0
       next: 13.1.6_biqbaboplfbrettd7655fr4n2y
       openai: 3.1.0
       react: 18.2.0
@@ -1039,6 +1041,11 @@ packages:
   /esutils/2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /eventsource-parser/0.1.0:
+    resolution: {integrity: sha512-M9QjFtEIkwytUarnx113HGmgtk52LSn3jNAtnWKi3V+b9rqSfQeVdLsaD5AG/O4IrGQwmAAHBIsqbmURPTd2rA==}
+    engines: {node: '>=14.18'}
     dev: false
 
   /fast-deep-equal/3.1.3:
