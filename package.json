@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "zip": "zip -X --compression-method deflate -9 -r --junk-paths packages/extension.zip packages/extension/*",
     "prepare": "husky install"
   },
   "keywords": [],
