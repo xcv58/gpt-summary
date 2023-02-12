@@ -22,6 +22,10 @@ export default async function handler(req: NextRequest) {
     )
   }
 
+  if (req.method === 'OPTIONS') {
+    return done(NextResponse.json({}, { status: 200 }))
+  }
+
   const content = ((await req.json()).content || '').trim()
   if (!content) {
     return done(
