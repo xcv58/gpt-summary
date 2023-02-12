@@ -11,7 +11,7 @@ function createModal() {
           <button class="gtp-summary_modal__close" aria-label="Close modal" data-micromodal-close></button>
         </div>
         <div class="gtp-summary_modal__content" id="gpt-summary-modal-content">
-          <span class="gpt-summary-loader"></span>
+          Loading...
         </div>
         <div class="gtp-summary_modal__footer">
           <button class="gtp-summary_modal__btn gtp-summary_modal__btn-primary" id="gpt-summary-copy">Copy</button>
