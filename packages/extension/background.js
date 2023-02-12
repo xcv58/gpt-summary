@@ -114,7 +114,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   console.log('content:', content)
 
   const body = { content }
-  const apiKey = getUserApiKey()
+  const apiKey = await getUserApiKey()
   if (apiKey) {
     body.apiKey = apiKey
   }
