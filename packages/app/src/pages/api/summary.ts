@@ -1,60 +1,39 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { NextRequest, NextResponse } from 'next/server'
 import { OpenAIStream } from '../../utils/OpenAIStream'
-import Cors from 'cors'
+import cors from '../../utils/cors'
 
 export const config = {
   runtime: 'edge',
 }
 
-const cors = Cors({
-  methods: ['POST', 'HEAD'],
-})
-
-// Helper method to wait for a middleware to execute before continuing
-// And to throw an error when an error happens in a middleware
-function runMiddleware(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  fn: Function
-) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
-      if (result instanceof Error) {
-        return reject(result)
-      }
-      return resolve(result)
-    })
-  })
-}
-
-type Data = {
-  data?: string
-  error?: { message: string }
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  await runMiddleware(req, res, cors)
+export default async function handler(req: NextRequest) {
+  const done = (res: NextResponse) => cors(req, res)
   if (!process.env.OPENAI_API_KEY) {
-    res.status(500).json({
-      error: {
-        message:
-          'OpenAI API key not configured, please follow instructions in README.md',
-      },
-    })
-    return
+    return done(
+      NextResponse.json(
+        {
+          error:
+            'OpenAI API key not configured, please follow instructions in README.md',
+        },
+        {
+          status: 500,
+        }
+      )
+    )
   }
 
-  const content = req.body.content || ''
-  if (content.trim().length === 0) {
-    res.status(400).json({
-      error: {
-        message: 'Please enter a valid content',
-      },
-    })
-    return
+  const content = (await (req.text() || '')).trim()
+  if (!content) {
+    return done(
+      NextResponse.json(
+        {
+          error: 'Please enter a valid content',
+        },
+        {
+          status: 400,
+        }
+      )
+    )
   }
 
   try {
@@ -71,25 +50,32 @@ export default async function handler(
     }
 
     const stream = await OpenAIStream(payload)
-    return new Response(stream, {
-      status: 200,
-      headers: {
-        'content-type': 'application/json',
-        'cache-control': 'public, s-maxage=3600, stale-while-revalidate=60',
-      },
-    })
+    return done(
+      new NextResponse(stream, {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+          'cache-control': 'public, s-maxage=3600, stale-while-revalidate=60',
+        },
+      })
+    )
   } catch (error: any) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
       console.error(error.response.status, error.response.data)
-      return new Response(error.response.data, {
-        status: error.response.status,
-      })
+      return done(
+        NextResponse.json(error.response, { status: error.response.status })
+      )
     } else {
       console.error(`Error with OpenAI API request: ${error.message}`)
-      return new Response('An error occurred during your request.', {
-        status: error.response.status,
-      })
+      return done(
+        NextResponse.json(
+          {
+            error: 'An error occurred during your request.',
+          },
+          { status: error.response.status }
+        )
+      )
     }
   }
 }
