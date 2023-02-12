@@ -7,7 +7,8 @@ export const config = {
 }
 
 export default async function handler(req: NextRequest) {
-  const done = (res: NextResponse) => cors(req, res)
+  // const done = (res: NextResponse) => cors(req, res)
+  const done = (res: NextResponse) => res
   if (!process.env.OPENAI_API_KEY) {
     return done(
       NextResponse.json(
