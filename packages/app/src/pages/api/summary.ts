@@ -40,7 +40,7 @@ export default async function handler(req: NextRequest) {
     const payload = {
       model: 'text-davinci-003',
       prompt: generatePrompt(content),
-      temperature: 0.5,
+      temperature: 0.3,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,

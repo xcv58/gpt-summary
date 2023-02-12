@@ -8,22 +8,8 @@ function getSelectionOrContent() {
   return window.document.body.innerText
 }
 
-async function fetchSummary(content) {
-  try {
-    response = await fetch('https://gpt-summary.xcv58.org/api/summary', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ content }),
-    })
-    const data = await response.json()
-    return data
-  } catch (e) {
-    console.error(error)
-    return { error }
-  }
-}
+ENDPOINT = 'https://gpt-summary-git-stream-api-xcv58.vercel.app/api/summary'
+MAX_CHARACTER = 8000
 
 async function executeScript(options) {
   let results = await chrome.scripting.executeScript(options)
@@ -56,10 +42,6 @@ async function upsertInjections(tabId) {
 }
 
 async function sendResult(tabId, data) {
-  await chrome.action.setBadgeText({
-    tabId,
-    text: '',
-  })
   await chrome.scripting.executeScript({
     target: { tabId },
     func: (data) => {
@@ -87,8 +69,15 @@ async function setLoadingIndicator(tabId) {
       const contentDiv = window.document.querySelector(
         '#gpt-summary-modal-content'
       )
-      contentDiv.innerHTML = `<span class="gpt-summary-loader"></span>`
+      contentDiv.innerHTML = 'Loading...'
     },
+  })
+}
+
+async function loaded(tabId) {
+  await chrome.action.setBadgeText({
+    tabId,
+    text: '',
   })
 }
 
@@ -107,13 +96,53 @@ chrome.action.onClicked.addListener(async (tab) => {
     return
   }
 
-  const { result } = await executeScript({
+  let { result: content } = await executeScript({
     target: { tabId },
     func: getSelectionOrContent,
   })
-  console.log(result)
+  if (content.length >= MAX_CHARACTER) {
+    console.log(`content larger than ${MAX_CHARACTER} characters`)
+    content = content.substring(0, MAX_CHARACTER)
+  }
+  console.log('content:', content)
 
-  const { data, error } = await fetchSummary(result)
-  console.log({ data, error })
-  await sendResult(tabId, data || error.message)
+  const response = await fetch(ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ content }),
+  })
+  console.log('response:', response)
+
+  if (!response.ok) {
+    console.log('error', response.statusText)
+    loaded(tabId)
+    // TODO: add error
+    sendResult(
+      tabId,
+      `Error retrieving data. Please check your internet connection and try again later.`
+    )
+    return
+  }
+
+  const data = response.body
+  if (!data) {
+    return
+  }
+
+  const reader = data.getReader()
+  const decoder = new TextDecoder()
+  let done = false
+
+  let summary = ''
+  while (!done) {
+    const { value, done: doneReading } = await reader.read()
+    done = doneReading
+    const chunkValue = decoder.decode(value)
+    summary += chunkValue
+    console.log('summary:', summary)
+    await sendResult(tabId, summary)
+  }
+  loaded(tabId)
 })
