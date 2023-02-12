@@ -8,8 +8,8 @@ function getSelectionOrContent() {
   return window.document.body.innerText
 }
 
-ENDPOINT = 'https://gpt-summary-git-stream-api-xcv58.vercel.app/api/summary'
-MAX_CHARACTER = 8000
+const ENDPOINT = 'https://gpt-summary.xcv58.org/api/summary'
+const MAX_CHARACTER = 8000
 
 async function executeScript(options) {
   let results = await chrome.scripting.executeScript(options)
