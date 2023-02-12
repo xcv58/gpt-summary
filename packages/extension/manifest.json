@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "GPT Summary",
   "description": "Summary of any webpage by GPT",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "background": {
     "service_worker": "background.js"
   },
