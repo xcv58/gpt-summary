@@ -22,7 +22,8 @@ export default async function handler(req: NextRequest) {
     )
   }
 
-  const content = (await (req.text() || '')).trim()
+  const { searchParams } = new URL(req.url)
+  const content = (searchParams.get('q') || '').trim()
   if (!content) {
     return done(
       NextResponse.json(
