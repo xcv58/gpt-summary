@@ -7,8 +7,7 @@ export const config = {
 }
 
 export default async function handler(req: NextRequest) {
-  // const done = (res: NextResponse) => cors(req, res)
-  const done = (res: NextResponse) => res
+  const done = (res: NextResponse) => cors(req, res)
   if (!process.env.OPENAI_API_KEY) {
     return done(
       NextResponse.json(
@@ -55,7 +54,6 @@ export default async function handler(req: NextRequest) {
       new NextResponse(stream, {
         status: 200,
         headers: {
-          'content-type': 'application/json',
           'cache-control': 'public, s-maxage=3600, stale-while-revalidate=60',
         },
       })
