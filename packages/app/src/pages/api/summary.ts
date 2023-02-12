@@ -22,7 +22,7 @@ export default async function handler(req: NextRequest) {
     )
   }
 
-  const content = (await (req.text() || '')).trim()
+  const content = ((await req.json()).content || '').trim()
   if (!content) {
     return done(
       NextResponse.json(
@@ -53,9 +53,6 @@ export default async function handler(req: NextRequest) {
     return done(
       new NextResponse(stream, {
         status: 200,
-        headers: {
-          'cache-control': 'public, s-maxage=3600, stale-while-revalidate=60',
-        },
       })
     )
   } catch (error: any) {
