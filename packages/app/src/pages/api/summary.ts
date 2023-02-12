@@ -26,7 +26,9 @@ export default async function handler(req: NextRequest) {
     return done(NextResponse.json({}, { status: 200 }))
   }
 
-  const content = ((await req.json()).content || '').trim()
+  const payload = await req.json()
+  const { apiKey = '' } = payload
+  const content = (payload.content || '').trim()
   if (!content) {
     return done(
       NextResponse.json(
@@ -53,7 +55,7 @@ export default async function handler(req: NextRequest) {
       n: 1,
     }
 
-    const stream = await OpenAIStream(payload)
+    const stream = await OpenAIStream(payload, apiKey)
     return done(
       new NextResponse(stream, {
         status: 200,

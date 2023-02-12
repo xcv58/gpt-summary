@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GPT Summary Options</title>
+  </head>
+
+  <body>
+    <div>
+      <p>Why do I need input my OpenAI API key?</p>
+      <p>
+        For a more reliable and uninterrupted experience, we recommend using
+        your own API key instead of relying on the default one. This will give
+        you more control over the API connection and prevent potential issues
+        such as outages or network problems that may occur with the default API
+        key. By using your own API key, you can ensure that the extension works
+        smoothly and delivers the results you need.
+      </p>
+      You can find how to get your secret API key
+      <a
+        href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key"
+        target="_blank"
+        >here</a
+      >.
+    </div>
+    <div>Your OpenAI API Key:</div>
+    <input id="openai_api_key" />
+    <div id="status"></div>
+    <button id="save">Save</button>
+    <script src="options.js"></script>
+  </body>
+</html>

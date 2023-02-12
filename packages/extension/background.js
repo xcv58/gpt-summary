@@ -81,6 +81,13 @@ async function loaded(tabId) {
   })
 }
 
+async function getUserApiKey() {
+  const { openai_api_key } = await chrome.storage.sync.get({
+    openai_api_key: '',
+  })
+  return openai_api_key
+}
+
 chrome.action.onClicked.addListener(async (tab) => {
   console.log('onclick')
   const tabId = tab.id
@@ -106,12 +113,17 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
   console.log('content:', content)
 
+  const body = { content }
+  const apiKey = getUserApiKey()
+  if (apiKey) {
+    body.apiKey = apiKey
+  }
   const response = await fetch(ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify(body),
   })
   console.log('response:', response)
 
