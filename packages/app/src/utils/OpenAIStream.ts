@@ -6,7 +6,7 @@ import {
 
 export interface OpenAIStreamPayload {
   model: string
-  prompt: string
+  messages: { role: string; content: string }[]
   temperature: number
   top_p: number
   frequency_penalty: number
@@ -21,7 +21,7 @@ export async function OpenAIStream(payload: OpenAIStreamPayload, apiKey = '') {
   const decoder = new TextDecoder()
 
   let counter = 0
-  const res = await fetch('https://api.openai.com/v1/completions', {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey ? apiKey : process.env.OPENAI_API_KEY}`,
@@ -43,12 +43,12 @@ export async function OpenAIStream(payload: OpenAIStreamPayload, apiKey = '') {
           }
           try {
             const json = JSON.parse(data)
-            const text = json.choices[0].text
-            if (counter < 2 && (text.match(/\n/) || []).length) {
+            const content = json.choices[0]?.delta?.content
+            if (counter < 2 && (content.match(/\n/) || []).length) {
               // this is a prefix character (i.e., "\n\n"), do nothing
               return
             }
-            const queue = encoder.encode(text)
+            const queue = encoder.encode(content)
             controller.enqueue(queue)
             counter++
           } catch (e) {

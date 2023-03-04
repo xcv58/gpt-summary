@@ -44,8 +44,8 @@ export default async function handler(req: NextRequest) {
 
   try {
     const payload = {
-      model: 'text-davinci-003',
-      prompt: generatePrompt(content),
+      model: 'gpt-3.5-turbo',
+      messages: generateMessage(content),
       temperature: 0.3,
       top_p: 1,
       frequency_penalty: 0,
@@ -82,7 +82,12 @@ export default async function handler(req: NextRequest) {
   }
 }
 
-function generatePrompt(content: string) {
-  return `${content}
-write summary for above content:`
+function generateMessage(content: string) {
+  return [
+    {
+      role: 'system',
+      content: 'You are an assitant that summarize the content in concise way',
+    },
+    { role: 'user', content },
+  ]
 }
