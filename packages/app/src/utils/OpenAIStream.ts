@@ -20,7 +20,6 @@ export async function OpenAIStream(payload: OpenAIStreamPayload, apiKey = '') {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
-  let counter = 0
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     headers: {
       'Content-Type': 'application/json',
@@ -44,13 +43,8 @@ export async function OpenAIStream(payload: OpenAIStreamPayload, apiKey = '') {
           try {
             const json = JSON.parse(data)
             const content = json.choices[0]?.delta?.content
-            if (counter < 2 && (content.match(/\n/) || []).length) {
-              // this is a prefix character (i.e., "\n\n"), do nothing
-              return
-            }
             const queue = encoder.encode(content)
             controller.enqueue(queue)
-            counter++
           } catch (e) {
             // maybe parse error
             controller.error(e)
